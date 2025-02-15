@@ -110,9 +110,16 @@ function Landing({ user, handleLogout, supabase }) {
             >
               {activity.activity_type} - {activity.location} -{" "}
               {new Date(activity.datetime).toLocaleString()}
+              {/* include number of interested users */}
+              {activity.interested_users?.length > 0 && (
+                <span> - {activity.interested_users.length} interested</span>
+              )}
+              {/* include if the current user is interested */}
               {activity.interested_users?.includes(
                 user.user_metadata.username
-              ) && <span style={{ color: "green" }}> - Interested!</span>}
+              ) && (
+                <span style={{ color: "green" }}> - You're Interested!</span>
+              )}
             </li>
           ))}
         </ul>
