@@ -1,15 +1,16 @@
 import { useState } from "react";
 
 import "./App.css";
+import Home from "./components/home";
 
 function App() {
-  // const [count, setCount] = useState(0)
+  const [screen, setScreen] = useState("home");
 
   return (
     <>
       <div>
-        <h1>Welcome to Geekshacking</h1>
-     
+        {/* if screen is home, show home */}
+        {screen === "home" && <Home />}
       </div>
     </>
   );
