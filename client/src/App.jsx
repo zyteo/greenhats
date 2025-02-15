@@ -50,7 +50,7 @@ function App() {
         {screen === "landing" && (
           <Landing
             user={user}
-            setScreen={setScreen}
+            supabase={supabase}
             handleLogout={handleLogout}
           />
         )}
