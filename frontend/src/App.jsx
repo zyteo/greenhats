@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import "./App.css";
-import Home from "./components/home";
-import Signup from "./components/signup";
+import Home from "./components/Home";
+import Signup from "./components/Signup";
 
 function App() {
   const [screen, setScreen] = useState("home");
