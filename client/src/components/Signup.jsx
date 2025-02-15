@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
 function Signup({ setScreen, supabase }) {
+  const handleHome = () => {
+    setScreen("home");
+  };
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       alert("Passwords do not match");
@@ -24,7 +27,9 @@ function Signup({ setScreen, supabase }) {
       } else {
         console.log("Signup successful:", data);
         setScreen("login");
-        alert("Signup successful!");
+        alert(
+          "Signup successful! You must verify your email before you can log in."
+        );
         setScreen("login");
       }
     } catch (err) {
@@ -67,7 +72,9 @@ function Signup({ setScreen, supabase }) {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
+
       <button onClick={handleRegister}>Register</button>
+      <button onClick={handleHome}>Back</button>
     </div>
   );
 }
