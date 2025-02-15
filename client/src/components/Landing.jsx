@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DatePicker from "react-datepicker"; // Install: npm install react-datepicker
-import "react-datepicker/dist/react-datepicker.css"; // Import styles
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function Landing({ user, handleLogout, supabase }) {
   const [activities, setActivities] = useState([]);
@@ -39,7 +39,7 @@ function Landing({ user, handleLogout, supabase }) {
             activity_type: newActivity.name.trim(),
             datetime: newActivity.datetime,
             location: newActivity.location,
-            user_id: user.id,
+            interested_users: [user.user_metadata.username], // Initialize with the creator
           },
         ]);
 
@@ -62,35 +62,34 @@ function Landing({ user, handleLogout, supabase }) {
   };
 
   const handleInterest = async (activity) => {
-    const isInterested = activity.interested_users?.includes(user.user_metadata.username);
-  
+    const username = user.user_metadata.username;
+    let updatedInterestedUsers = activity.interested_users || []; // Initialize if null
+
+    if (activity.interested_users?.includes(username)) {
+      updatedInterestedUsers = activity.interested_users.filter(
+        (user) => user !== username
+      ); // Remove
+    } else {
+      updatedInterestedUsers = [...(activity.interested_users || []), username]; // Add
+    }
+
     try {
-      // Check if user is already interested
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("activities")
-        .update({
-          // Conditionally update the interested_users array
-          interested_users: isInterested
-            ? supabase
-                .rpc("array_remove", { arr: activity.interested_users, value: user.user_metadata.username })
-            : supabase
-                .rpc("array_append", { arr: activity.interested_users, value: user.user_metadata.username }),
-        })
-        .eq("id", activity.id); // Update the activity with the matching id
-  
+        .update({ interested_users: updatedInterestedUsers }) // Send the entire updated array
+        .eq("id", activity.id);
+
       if (error) {
         console.error("Error updating interest:", error);
         alert(error.message);
       } else {
-        fetchActivities(); // Refresh activities to reflect the updated interest list
+        fetchActivities();
       }
     } catch (err) {
       console.error("Error updating interest:", err);
       alert("An unexpected error occurred while updating interest.");
     }
   };
-  
-  
 
   return (
     <div>
@@ -106,16 +105,14 @@ function Landing({ user, handleLogout, supabase }) {
           {activities.map((activity) => (
             <li
               key={activity.id}
-              onClick={() => handleInterest(activity)} // Add onClick handler
-              style={{ cursor: "pointer" }} // Indicate clickable element
+              onClick={() => handleInterest(activity)}
+              style={{ cursor: "pointer" }}
             >
               {activity.activity_type} - {activity.location} -{" "}
-              {new Date(activity.datetime).toLocaleString()} (Added by{" "}
-              {activity.user_id})
+              {new Date(activity.datetime).toLocaleString()}
               {activity.interested_users?.includes(
                 user.user_metadata.username
-              ) && <span style={{ color: "green" }}> - Interested!</span>}{" "}
-              {/* Display if user is interested */}
+              ) && <span style={{ color: "green" }}> - Interested!</span>}
             </li>
           ))}
         </ul>
