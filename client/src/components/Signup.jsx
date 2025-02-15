@@ -2,8 +2,6 @@ import React, { useState } from "react";
 
 function Signup({ setScreen, supabase }) {
   const handleRegister = async () => {
-    setError(null);
-
     if (password !== confirmPassword) {
       alert("Passwords do not match");
       return;
@@ -21,7 +19,6 @@ function Signup({ setScreen, supabase }) {
       });
 
       if (error) {
-        setError(error.message);
         console.error("Supabase sign-up error:", error);
         alert(error.message); // Alert Supabase error message
       } else {
@@ -31,7 +28,6 @@ function Signup({ setScreen, supabase }) {
         setScreen("login");
       }
     } catch (err) {
-      setError("An unexpected error occurred.");
       console.error("Signup error:", err);
       alert("An unexpected error occurred."); // Alert general error
     }
